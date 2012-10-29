@@ -7,6 +7,7 @@ import org.powerbot.game.api.methods.interactive.NPCs;
 import org.powerbot.game.api.methods.interactive.Players;
 import org.powerbot.game.api.methods.tab.Skills;
 import org.powerbot.game.api.methods.widget.Camera;
+import org.powerbot.game.api.util.Random;
 import org.powerbot.game.api.util.Time;
 import org.powerbot.game.api.wrappers.Tile;
 import org.powerbot.game.api.wrappers.interactive.NPC;
@@ -20,7 +21,8 @@ public class Attack extends Node {
 		int maxHealth = Skills.getLevel(Skills.CONSTITUTION) * 10;
 		int currentHealth = Settings.get(1240) >>> 1;
 		int currentHealthPercent = (int) (((double) currentHealth / maxHealth) * 100.0);
-		if (currentHealthPercent > 60) {
+		if (currentHealthPercent > 60 && !Players.getLocal().isInCombat() && !Players.getLocal().isMoving()) {
+			System.out.println("Attack TRUE");
 			return true;
 		}
 		return false;
@@ -28,6 +30,7 @@ public class Attack extends Node {
 
 	@Override
 	public void execute() {
+		System.out.println("Executing");
 		NPC goblin = NPCs.getNearest(Constants.GOBLIN_IDS);
 		if (canAttack(goblin)
 				&& goblin.isOnScreen()
@@ -35,11 +38,11 @@ public class Attack extends Node {
 						|| !Players.getLocal().isInCombat() || !Players
 						.getLocal().isMoving())) {
 			goblin.click(true);
-			Time.sleep(500, 800);
+			waitForCombat(5000);
 		} else if (goblin != null && !goblin.isOnScreen()) {
 			Camera.turnTo(goblin.getLocation());
 		} else {
-			Walking.walk(new Tile(3248, 3242, 0));
+			Walking.walk(new Tile(Random.nextInt(3246, 3250), Random.nextInt(3240, 3244), 0));
 		}
 	}
 
@@ -52,5 +55,13 @@ public class Attack extends Node {
 			}
 		}
 		return false;
+	}
+	
+	private final void waitForCombat(long timeout) {
+		long start = System.currentTimeMillis();
+		while((System.currentTimeMillis() - start) <= timeout) {
+			sleep(50);
+			if(Players.getLocal().isInCombat()) break;
+		}
 	}
 }

@@ -16,6 +16,7 @@ public class Eat extends Node {
         int currentHealth = Settings.get(1240) >>> 1;
         int currentHealthPercent = (int) (((double) currentHealth / maxHealth) * 100.0);
         if(currentHealthPercent <= 60) {
+        	System.out.println("Eat TRUE");
         	return true;
         }
 		return false;
@@ -24,8 +25,10 @@ public class Eat extends Node {
 	@Override
 	public void execute() {
 		if(Inventory.contains(Constants.FOOD_IDS)) {
-			Inventory.selectItem(Inventory.getItem(Constants.FOOD_IDS));
+			System.out.println("Trying to eat");
+			Inventory.getItem(Constants.FOOD_IDS).getWidgetChild().interact("Eat");
 		} else {
+			System.out.println("No food, logging out");
 			Game.logout(true);
 		}
 	}

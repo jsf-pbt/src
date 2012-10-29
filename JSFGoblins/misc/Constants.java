@@ -23,5 +23,5 @@ public class Constants {
 	 * These are the food IDs.
 	 * We will eat any of them when our HP is < 60%.
 	 */
-	public static final int[] FOOD_IDS = {};
+	public static final int[] FOOD_IDS = {2142};
 }
