@@ -10,6 +10,11 @@ import JSFGoblins.misc.Constants;
 
 public class Eat extends Node {
 
+	/**
+	 * If this method returns true, then the execute() is ran.
+	 * Here we check for if we need to eat.
+	 * This is, if our health is under 60%.
+	 */
 	@Override
 	public boolean activate() {
 		int maxHealth = Skills.getLevel(Skills.CONSTITUTION) * 10;
@@ -22,14 +27,36 @@ public class Eat extends Node {
 		return false;
 	}
 
+	/**
+	 * This is the method that actually makes the bot perform actions.
+	 * Here we logout if out of food, or we eat if we have food.
+	 * Since we've checked if we have to eat before this, it is the correct way to do it.
+	 */
 	@Override
 	public void execute() {
 		if(Inventory.contains(Constants.FOOD_IDS)) {
 			System.out.println("Trying to eat");
 			Inventory.getItem(Constants.FOOD_IDS).getWidgetChild().interact("Eat");
+			waitForEat(5000);
 		} else {
 			System.out.println("No food, logging out");
 			Game.logout(true);
+		}
+	}
+	
+	/**
+	 * waitForEat(long)
+	 * This method waits up to 'timeout' milliseconds for an action to occur.
+	 * It is especially useful when we're expecting something to happen,
+	 * and we want to wait as little as possible.
+	 * @param timeout
+	 */
+	private void waitForEat(long timeout) {
+		int foodCount = Inventory.getCount(Constants.FOOD_IDS);
+		long startTime = System.currentTimeMillis();
+		while(System.currentTimeMillis() - startTime < timeout) {
+			sleep(50);
+			if((Inventory.getCount(Constants.FOOD_IDS) != foodCount)) return;
 		}
 	}
 

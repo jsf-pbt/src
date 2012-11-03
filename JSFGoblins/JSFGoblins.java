@@ -15,7 +15,7 @@ import JSFGoblins.nodes.Eat;
 
 @Manifest(name ="JSFGoblins", authors={"JSF"})
 public class JSFGoblins extends ActiveScript {
-
+	
 	private final List<Node> jobs_collection = Collections.synchronizedList(new ArrayList<Node>());
 	private Tree job_container = null;
 	
